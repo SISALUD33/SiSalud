@@ -12,7 +12,7 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
 
     @Override
     public boolean registrarUsuario(UsuarioDTO u) {
-        String sql = "{ CALL sp_usuario_registrar(?, ?, ?, ?, ?) }";
+        String sql = "{ CALL sisalud_mysql.sp_usuario_registrar(?, ?, ?, ?, ?) }";
 
         try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 
@@ -32,7 +32,7 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
 
     @Override
     public UsuarioDTO login(String correo, String clave) {
-        String sql = "{ CALL sp_usuario_login(?, ?) }";
+        String sql = "{ CALL sisalud_mysql.sp_usuario_login(?, ?) }";
 
         try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 
@@ -62,7 +62,7 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
 
     @Override
     public boolean cambiarClave(int idUsuario, String claveActual, String claveNueva) {
-        String sql = "{ CALL sp_usuario_cambiar_clave(?, ?, ?) }";
+        String sql = "{ CALL sisalud_mysql.sp_usuario_cambiar_clave(?, ?, ?) }";
 
         try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 

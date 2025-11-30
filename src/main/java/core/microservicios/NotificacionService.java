@@ -14,7 +14,7 @@ public class NotificacionService {
             }
 
             // Limpia el número y deja solo dígitos
-            String soloDigitos = numero.replaceAll("\\D", ""); // quita espacios, +, -, etc.
+            String soloDigitos = numero.replaceAll("\\D", ""); 
 
 
             // Validamos que queden exactamente 10 dígitos

@@ -12,7 +12,7 @@ public class CampañaDAO_MySQL implements ICampañaDAO {
 
     @Override
     public boolean crearCampaña(CampañaDTO c) {
-        String sql = "{ CALL sp_campaña_crear(?, ?, ?, ?, ?, ?, ?) }";
+        String sql = "{ CALL sisalud_mysql.sp_campaña_crear(?, ?, ?, ?, ?, ?, ?) }";
 
         try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 
@@ -57,12 +57,12 @@ public class CampañaDAO_MySQL implements ICampañaDAO {
     }
 
     @Override
-    public boolean actualizarEstado(int idCampaña, String nuevoEstado) {
-        String sql = "{ CALL sp_campaña_actualizar_estado(?, ?) }";
+    public boolean actualizarEstado(int idCampania, String nuevoEstado) {
+        String sql = "{ CALL sisalud_mysql.sp_campaña_actualizar_estado(?, ?) }";
 
         try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 
-            cs.setInt(1, idCampaña);
+            cs.setInt(1, idCampania);
             cs.setString(2, nuevoEstado);
 
             return cs.executeUpdate() > 0;
@@ -74,9 +74,50 @@ public class CampañaDAO_MySQL implements ICampañaDAO {
     }
 
     @Override
+    public CampañaDTO obtenerPorId(int idCampania) {
+        String sql = "{ CALL sisalud_mysql.sp_campaña_obtener_por_id(?) }";
+        CampañaDTO c = null;
+
+        try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setInt(1, idCampania);
+
+            try (ResultSet rs = cs.executeQuery()) {
+                if (rs.next()) {
+                    c = new CampañaDTO();
+                    c.setIdCampania(rs.getInt("id_campaña"));
+                    c.setTitulo(rs.getString("titulo"));
+                    c.setDescripcion(rs.getString("descripcion"));
+                    c.setMeta(rs.getDouble("meta"));
+                    c.setRecaudado(rs.getDouble("recaudado"));
+                    c.setEstado(rs.getString("estado"));
+                    c.setFechaCreacion(rs.getString("fecha_creacion"));
+
+                    int idPac = rs.getInt("id_paciente");
+                    c.setIdPaciente(rs.wasNull() ? null : idPac);
+
+                    int idCui = rs.getInt("id_cuidador");
+                    c.setIdCuidador(rs.wasNull() ? null : idCui);
+
+                    int idProf = rs.getInt("id_profesional_salud");
+                    c.setIdProfesionalSalud(rs.wasNull() ? null : idProf);
+
+                    int idCli = rs.getInt("id_clinica");
+                    c.setIdClinica(rs.wasNull() ? null : idCli);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return c;
+    }
+
+    @Override
     public List<CampañaDTO> listarAprobadas() {
         List<CampañaDTO> lista = new ArrayList<>();
-        String sql = "{ CALL sp_campaña_listar_aprobadas() }";
+        String sql = "{ CALL sisalud_mysql.sp_campaña_listar_aprobadas() }";
 
         try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql); ResultSet rs = cs.executeQuery()) {
 
