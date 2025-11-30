@@ -41,7 +41,7 @@ public class ClinicaDAO_MySQL implements IClinicaDAO {
     public boolean crearClinica(String nombre, String nit, String direccion,
             String telefono, String correo, int idUsuario) {
 
-        String sql = "{ CALL sp_clinica_crear(?, ?, ?, ?, ?) }";
+        String sql = "{ CALL sisalud_mysql.sp_clinica_crear(?, ?, ?, ?, ?) }";
 
         try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 

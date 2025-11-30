@@ -32,8 +32,8 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
             return false;
         }
     }
-
-    @Override
+    
+     @Override
     public Integer registrarUsuarioRetornarID(UsuarioDTO u) {
 
         String sql = "{ CALL sisalud_mysql.sp_usuario_registrar(?, ?, ?, ?, ?) }";
@@ -64,6 +64,7 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
 
         return null; // error
     }
+
 
     @Override
     public UsuarioDTO login(String correo, String clave) {
