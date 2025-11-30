@@ -3,6 +3,7 @@ package core.negocios;
 import core.datos.dao.interfaces.IUsuarioDAO;
 import core.datos.dao.mysql.UsuarioDAO_MySQL;
 import core.datos.dto.UsuarioDTO;
+import java.util.List;
 
 public class UsuarioNegocios {
 
@@ -39,5 +40,27 @@ public class UsuarioNegocios {
             return false;
         }
         return usuarioDAO.cambiarClave(idUsuario, claveActual, claveNueva);
+    }
+
+    public Integer registrarUsuarioYRetornarID(UsuarioDTO u) {
+        if (u.getNombre() == null || u.getNombre().isBlank()
+                || u.getCorreo() == null || u.getCorreo().isBlank()
+                || u.getClave() == null || u.getClave().isBlank()) {
+            return null;
+        }
+
+        if (u.getIdRol() <= 0) {
+            return null;
+        }
+
+        return usuarioDAO.registrarUsuarioRetornarID(u);
+    }
+    
+     public List<UsuarioDTO> listarUsuarios() {
+        return usuarioDAO.listarUsuarios();
+    }
+
+    public boolean cambiarEstadoUsuario(int idUsuario, boolean activo) {
+        return usuarioDAO.cambiarEstadoUsuario(idUsuario, activo);
     }
 }

@@ -7,6 +7,9 @@ import core.datos.dto.UsuarioDTO;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsuarioDAO_MySQL implements IUsuarioDAO {
 
@@ -31,6 +34,38 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
     }
 
     @Override
+    public Integer registrarUsuarioRetornarID(UsuarioDTO u) {
+
+        String sql = "{ CALL sisalud_mysql.sp_usuario_registrar(?, ?, ?, ?, ?) }";
+
+        try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setString(1, u.getNombre());
+            cs.setString(2, u.getCorreo());
+            cs.setString(3, u.getTelefono());
+            cs.setString(4, u.getClave());
+            cs.setInt(5, u.getIdRol());
+
+            int filas = cs.executeUpdate();
+            if (filas == 0) {
+                return null; // no insertó
+            }
+
+            // Obtener la llave generada AUTO_INCREMENT
+            try (ResultSet rs = cs.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // id_usuario generado
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null; // error
+    }
+
+    @Override
     public UsuarioDTO login(String correo, String clave) {
         String sql = "{ CALL sisalud_mysql.sp_usuario_login(?, ?) }";
 
@@ -45,7 +80,7 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
                     u.setIdUsuario(rs.getInt("id_usuario"));
                     u.setNombre(rs.getString("nombre"));
                     u.setCorreo(rs.getString("correo"));
-                    u.setTelefono(rs.getString("telefono"));   
+                    u.setTelefono(rs.getString("telefono"));
                     u.setIdRol(rs.getInt("id_rol"));
                     u.setActivo(rs.getBoolean("activo"));
                     u.setFechaRegistro(rs.getString("fecha_registro"));
@@ -84,4 +119,47 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
         return false;
     }
 
+    @Override
+    public List<UsuarioDTO> listarUsuarios() {
+        List<UsuarioDTO> lista = new ArrayList<>();
+        String sql = "{ CALL sisalud_mysql.sp_usuario_listar() }";
+
+        try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql); ResultSet rs = cs.executeQuery()) {
+
+            while (rs.next()) {
+                UsuarioDTO u = new UsuarioDTO();
+                u.setIdUsuario(rs.getInt("id_usuario"));
+                u.setNombre(rs.getString("nombre"));
+                u.setCorreo(rs.getString("correo"));
+                u.setTelefono(rs.getString("telefono"));
+                u.setIdRol(rs.getInt("id_rol"));
+                u.setActivo(rs.getBoolean("activo"));
+                u.setFechaRegistro(rs.getString("fecha_registro"));
+                lista.add(u);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+    // 🔹 Nuevo: cambiar estado (activo / inactivo)
+    @Override
+    public boolean cambiarEstadoUsuario(int idUsuario, boolean activo) {
+        String sql = "{ CALL sisalud_mysql.sp_usuario_cambiar_estado(?, ?) }";
+
+        try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setInt(1, idUsuario);
+            cs.setBoolean(2, activo);
+
+            return cs.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

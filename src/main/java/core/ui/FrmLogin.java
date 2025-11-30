@@ -1,4 +1,3 @@
-
 package core.ui;
 
 import core.datos.dto.UsuarioDTO;
@@ -79,12 +78,12 @@ public class FrmLogin extends JFrame {
 
         panelRegistro.add(new JLabel("Rol:"));
         cmbRolReg = new JComboBox<>(new String[]{
-                "PACIENTE",
-                "CUIDADOR",
-                "DONANTE",
-                "ADMIN",
-                "MEDICO",
-                "CLINICA"
+            "PACIENTE",
+            "CUIDADOR",
+            "DONANTE",
+            "ADMIN",
+            "MEDICO",
+            "CLINICA"
         });
         panelRegistro.add(cmbRolReg);
 
@@ -115,7 +114,6 @@ public class FrmLogin extends JFrame {
     }
 
     // =================== LÓGICA LOGIN ===================
-
     private void hacerLogin() {
         String correo = txtCorreoLogin.getText().trim();
         String clave = new String(txtClaveLogin.getPassword());
@@ -134,13 +132,13 @@ public class FrmLogin extends JFrame {
             // 1 = PACIENTE, 2 = CUIDADOR, 3 = DONANTE, 4 = ADMIN, 5 = MEDICO, 6 = CLINICA
             switch (usuario.getIdRol()) {
                 case 1:
-                    // new FrmCampañasPaciente(usuario).setVisible(true);
+                    new FrmCampañasPaciente(usuario).setVisible(true);
                     break;
                 case 3:
                     // new FrmDonacion(usuario).setVisible(true);
                     break;
                 case 4:
-                    // new FrmCampañasAdmin(usuario).setVisible(true);
+                    new FrmAdminUsuarios().setVisible(true);
                     break;
                 // etc...
                 default:
@@ -148,7 +146,7 @@ public class FrmLogin extends JFrame {
                             "Rol aún no asociado a una pantalla. idRol = " + usuario.getIdRol());
             }
 
-            // this.dispose(); // Si quieres cerrar el login al entrar
+            this.dispose(); // Si quieres cerrar el login al entrar
         } else {
             JOptionPane.showMessageDialog(this,
                     "Correo, contraseña o estado del usuario inválidos.");
@@ -156,7 +154,6 @@ public class FrmLogin extends JFrame {
     }
 
     // =================== LÓGICA REGISTRO ===================
-
     private void hacerRegistro() {
         String nombre = txtNombreReg.getText().trim();
         String correo = txtCorreoReg.getText().trim();
@@ -195,50 +192,39 @@ public class FrmLogin extends JFrame {
     }
 
     /**
-     * Mapea el texto del rol al idRol entero.
-     * IMPORTANTE: estos valores deben coincidir con tu tabla de roles en BD.
+     * Mapea el texto del rol al idRol entero. IMPORTANTE: estos valores deben
+     * coincidir con tu tabla de roles en BD.
      */
     private int mapearRolATabla(String rolTexto) {
-        switch (rolTexto) {
-            case "PACIENTE":
-                return 1;
-            case "CUIDADOR":
-                return 2;
-            case "DONANTE":
-                return 3;
-            case "ADMIN":
-                return 4;
-            case "MEDICO":
-                return 5;
-            case "CLINICA":
-                return 6;
-            default:
-                return 0;
-        }
+        return switch (rolTexto) {
+            case "PACIENTE" ->
+                1;
+            case "CUIDADOR" ->
+                2;
+            case "DONANTE" ->
+                3;
+            case "ADMIN" ->
+                4;
+            case "MEDICO" ->
+                5;
+            case "CLINICA" ->
+                6;
+            default ->
+                0;
+        };
     }
 
     // =================== CAMBIO DE CONTRASEÑA ===================
-
     private void abrirDialogoCambioClave() {
         DlgCambioClave dlg = new DlgCambioClave(this, true, usuarioNegocios);
         dlg.setVisible(true);
     }
 
     // =================== MAIN PARA PROBAR ===================
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new FrmLogin().setVisible(true));
     }
 
-    // =========================================================
-    // =============== DIALOGO CAMBIO DE CLAVE =================
-    // =========================================================
-
-    /**
-     * Diálogo modal para cambiar la contraseña.
-     * Pide: idUsuario, clave actual y clave nueva.
-     * Usa UsuarioNegocios.cambiarClave(...)
-     */
     private static class DlgCambioClave extends JDialog {
 
         private final UsuarioNegocios usuarioNegocios;

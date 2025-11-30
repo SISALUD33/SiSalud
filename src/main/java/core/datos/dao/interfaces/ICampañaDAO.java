@@ -16,4 +16,8 @@ public interface ICampañaDAO {
 
 
     List<CampañaDTO> listarAprobadas();
+    
+    List<CampañaDTO> listarPorPaciente(int idPaciente);
+
+    
 }

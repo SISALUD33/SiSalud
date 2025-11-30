@@ -153,4 +153,37 @@ public class CampañaDAO_MySQL implements ICampañaDAO {
         return lista;
     }
 
+    @Override
+    public List<CampañaDTO> listarPorPaciente(int idPaciente) {
+        List<CampañaDTO> lista = new ArrayList<>();
+        String sql = "{ CALL sisalud_mysql.sp_campaña_listar_por_paciente(?) }";
+
+        try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setInt(1, idPaciente);
+
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                    CampañaDTO c = new CampañaDTO();
+                    c.setIdCampania(rs.getInt("id_campaña"));
+                    c.setTitulo(rs.getString("titulo"));
+                    c.setDescripcion(rs.getString("descripcion"));
+                    c.setMeta(rs.getDouble("meta"));
+                    c.setRecaudado(rs.getDouble("recaudado"));
+                    c.setEstado(rs.getString("estado"));
+                    c.setFechaCreacion(rs.getString("fecha_creacion"));
+
+                    // si en el SP devuelves id_paciente, id_cuidador, etc, también los llenas
+                    lista.add(c);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+    
+
 }

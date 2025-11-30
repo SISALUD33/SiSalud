@@ -2,21 +2,35 @@ package core.negocios;
 
 import core.datos.conexion.ConexionMySQL;
 import core.datos.dao.interfaces.ICampañaDAO;
+import core.datos.dao.interfaces.IClinicaDAO;
+import core.datos.dao.interfaces.IProfesionalSaludDAO;
+import core.datos.dao.interfaces.ICuidadorDAO;
 import core.datos.dao.mysql.CampañaDAO_MySQL;
+import core.datos.dao.mysql.ClinicaDAO_MySQL;
+import core.datos.dao.mysql.ProfesionalSaludDAO_MySQL;
+import core.datos.dao.mysql.CuidadorDAO_MySQL;
 import core.datos.dto.CampañaDTO;
+import core.datos.dto.ClinicaDTO;
+import core.datos.dto.ProfesionalSaludDTO;
+import core.datos.dto.CuidadorDTO;
 import core.microservicios.NotificacionService;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
-
 import java.util.List;
 
 public class CampañaNegocios {
 
     private final ICampañaDAO campañaDAO;
+    private final IClinicaDAO clinicaDAO;
+    private final IProfesionalSaludDAO profesionalDAO;
+    private final ICuidadorDAO cuidadorDAO;
 
     public CampañaNegocios() {
         this.campañaDAO = new CampañaDAO_MySQL();
+        this.clinicaDAO = new ClinicaDAO_MySQL();
+        this.profesionalDAO = new ProfesionalSaludDAO_MySQL();
+        this.cuidadorDAO = new CuidadorDAO_MySQL();
     }
 
     public boolean registrarCampaña(CampañaDTO c, String telefonoMedico) {
@@ -67,12 +81,10 @@ public class CampañaNegocios {
             msgMedico = null;
         }
 
-        // Notificar paciente/cuidador si aplica
         if (msgPacienteCuidador != null) {
             notificarPacienteYCuidador(campaña, msgPacienteCuidador);
         }
 
-        // Notificar medico si aplica (por ejemplo cuando se aprueba o se crea)
         if (msgMedico != null) {
             notificarMedico(campaña, msgMedico);
         }
@@ -122,7 +134,7 @@ public class CampañaNegocios {
 
     // --------- helpers que llaman a los SP de contacto ---------
     private String obtenerTelefonoPaciente(Connection conn, int idPaciente) throws Exception {
-        String sql = "{ CALL sp_paciente_contacto(?) }";
+        String sql = "{ CALL sisalud_mysql.sp_paciente_contacto(?) }";
         try (CallableStatement cs = conn.prepareCall(sql)) {
             cs.setInt(1, idPaciente);
             try (ResultSet rs = cs.executeQuery()) {
@@ -135,7 +147,7 @@ public class CampañaNegocios {
     }
 
     private String obtenerTelefonoCuidador(Connection conn, int idCuidador) throws Exception {
-        String sql = "{ CALL sp_cuidador_contacto(?) }";
+        String sql = "{ CALL sisalud_mysql.sp_cuidador_contacto(?) }";
         try (CallableStatement cs = conn.prepareCall(sql)) {
             cs.setInt(1, idCuidador);
             try (ResultSet rs = cs.executeQuery()) {
@@ -148,7 +160,7 @@ public class CampañaNegocios {
     }
 
     private String obtenerTelefonoProfesional(Connection conn, int idProfesional) throws Exception {
-        String sql = "{ CALL sp_profesional_salud_contacto(?) }";
+        String sql = "{ CALL sisalud_mysql.sp_profesional_salud_contacto(?) }";
         try (CallableStatement cs = conn.prepareCall(sql)) {
             cs.setInt(1, idProfesional);
             try (ResultSet rs = cs.executeQuery()) {
@@ -162,5 +174,21 @@ public class CampañaNegocios {
 
     public List<CampañaDTO> obtenerCampañasAprobadas() {
         return campañaDAO.listarAprobadas();
+    }
+
+    public List<CampañaDTO> obtenerCampaniasPorPaciente(int idPaciente) {
+        return campañaDAO.listarPorPaciente(idPaciente);
+    }
+
+    public List<ClinicaDTO> listarClinicas() {
+        return clinicaDAO.listarTodas();
+    }
+
+    public List<ProfesionalSaludDTO> listarProfesionalesPorClinica(int idClinica) {
+        return profesionalDAO.listarPorClinica(idClinica);
+    }
+
+    public List<CuidadorDTO> listarCuidadores() {
+        return cuidadorDAO.listarTodos();
     }
 }
