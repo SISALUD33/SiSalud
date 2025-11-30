@@ -2,14 +2,14 @@
 package core.ui;
 
 
-public class DonarForm extends javax.swing.JFrame {
+public class FrmDonacion extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DonarForm.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmDonacion.class.getName());
 
     /**
      * Creates new form DonarForm
      */
-    public DonarForm() {
+    public FrmDonacion() {
         initComponents();
     }
 
@@ -60,7 +60,7 @@ public class DonarForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new DonarForm().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new FrmDonacion().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
