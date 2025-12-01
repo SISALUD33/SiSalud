@@ -13,7 +13,7 @@ public class DonacionDAO_PostgreSQL implements IDonacionDAO {
 
     @Override
     public boolean registrarDonacion(DonacionDTO d) {
-        String sql = "{ CALL sp_donacion_registrar(?, ?, ?, ?, ?, ?, ?) }";
+        String sql = "{ CALL public.sp_registrar_donacion(?, ?, ?, ?, ?, ?, ?) }";
 
         try (Connection conn = ConexionPostgreSQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 

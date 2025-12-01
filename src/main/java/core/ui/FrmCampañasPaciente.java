@@ -10,10 +10,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-/**
- * Pantalla principal para el rol PACIENTE. Muestra las campañas del paciente y
- * permite gestionarlas.
- */
 public class FrmCampañasPaciente extends JFrame {
 
     private final UsuarioDTO usuario;
@@ -168,7 +164,7 @@ public class FrmCampañasPaciente extends JFrame {
     }
 
     private void abrirDialogoCrearCampania() {
-        DlgCrearCampania dlg = new DlgCrearCampania(this, true);
+        DlgCrearCampania dlg = new DlgCrearCampania(this, true, idPaciente, campañaNegocios);
         dlg.setVisible(true);
 
         if (dlg.fueCreada()) {

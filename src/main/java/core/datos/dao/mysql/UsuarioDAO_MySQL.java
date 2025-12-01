@@ -32,8 +32,8 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
             return false;
         }
     }
-    
-     @Override
+
+    @Override
     public Integer registrarUsuarioRetornarID(UsuarioDTO u) {
 
         String sql = "{ CALL sisalud_mysql.sp_usuario_registrar(?, ?, ?, ?, ?) }";
@@ -46,15 +46,14 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
             cs.setString(4, u.getClave());
             cs.setInt(5, u.getIdRol());
 
-            int filas = cs.executeUpdate();
-            if (filas == 0) {
-                return null; // no insertó
-            }
+            boolean tieneResultado = cs.execute();
 
-            // Obtener la llave generada AUTO_INCREMENT
-            try (ResultSet rs = cs.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1); // id_usuario generado
+            if (tieneResultado) {
+                try (ResultSet rs = cs.getResultSet()) {
+                    if (rs.next()) {
+                        int id = rs.getInt("id_usuario_generado");
+                        return id > 0 ? id : null;
+                    }
                 }
             }
 
@@ -62,9 +61,8 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
             e.printStackTrace();
         }
 
-        return null; // error
+        return null;
     }
-
 
     @Override
     public UsuarioDTO login(String correo, String clave) {

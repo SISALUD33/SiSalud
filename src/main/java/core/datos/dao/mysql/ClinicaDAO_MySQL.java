@@ -3,6 +3,7 @@ package core.datos.dao.mysql;
 import core.datos.conexion.ConexionMySQL;
 import core.datos.dao.interfaces.IClinicaDAO;
 import core.datos.dto.ClinicaDTO;
+import core.datos.dto.UsuarioDTO;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -38,18 +39,16 @@ public class ClinicaDAO_MySQL implements IClinicaDAO {
     }
 
     @Override
-    public boolean crearClinica(String nombre, String nit, String direccion,
-            String telefono, String correo, int idUsuario) {
-
+    public boolean crearClinicaBasicaDesdeUsuario(UsuarioDTO u) {
         String sql = "{ CALL sisalud_mysql.sp_clinica_crear(?, ?, ?, ?, ?) }";
 
         try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 
-            cs.setString(1, nombre);
-            cs.setString(2, nit);
-            cs.setString(3, direccion);
-            cs.setString(4, telefono);
-            cs.setString(5, correo);
+            cs.setString(1, u.getNombre());           // nombre de la clínica (razón social)
+            cs.setString(2, "PENDIENTE");             // NIT por defecto
+            cs.setString(3, "");                      // dirección (vacío por ahora)
+            cs.setString(4, u.getTelefono());         // teléfono desde el usuario
+            cs.setString(5, u.getCorreo());           // correo desde el usuario
 
             return cs.executeUpdate() > 0;
 

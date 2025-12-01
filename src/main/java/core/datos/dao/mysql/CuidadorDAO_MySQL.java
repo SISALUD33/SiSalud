@@ -42,7 +42,7 @@ public class CuidadorDAO_MySQL implements ICuidadorDAO {
     
         @Override
     public boolean crearCuidador(int idUsuario) {
-        String sql = "{ CALL sp_cuidador_crear(?) }";
+        String sql = "{ CALL sisalud_mysql.sp_cuidador_crear(?) }";
 
         try (Connection conn = ConexionMySQL.getConnection();
              CallableStatement cs = conn.prepareCall(sql)) {

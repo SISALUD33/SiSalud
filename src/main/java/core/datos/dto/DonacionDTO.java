@@ -4,14 +4,14 @@ package core.datos.dto;
 
 public class DonacionDTO {
     private int idDonacion;
-    private int idCampana;
+    private int idCampania;
     private int idUsuarioDonante;
     private double monto;
-    private String fecha;            
     private String entidadBancaria;
     private String medioPago;
     private String destinoRecursos;
     private String referenciaPago;
+    private String fecha;
 
     public int getIdDonacion() {
         return idDonacion;
@@ -22,11 +22,11 @@ public class DonacionDTO {
     }
 
     public int getIdCampana() {
-        return idCampana;
+        return idCampania;
     }
 
     public void setIdCampana(int idCampana) {
-        this.idCampana = idCampana;
+        this.idCampania = idCampana;
     }
 
     public int getIdUsuarioDonante() {

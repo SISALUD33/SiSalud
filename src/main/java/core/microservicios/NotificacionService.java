@@ -6,6 +6,8 @@ import java.net.URLEncoder;
 
 public class NotificacionService {
 
+    private static final String API_KEY = "2039244"; 
+
     public static boolean enviarSMS(String numero, String mensaje) {
         try {
             if (numero == null || numero.trim().isEmpty()) {
@@ -14,8 +16,7 @@ public class NotificacionService {
             }
 
             // Limpia el número y deja solo dígitos
-            String soloDigitos = numero.replaceAll("\\D", ""); 
-
+            String soloDigitos = numero.replaceAll("\\D", "");
 
             // Validamos que queden exactamente 10 dígitos
             if (soloDigitos.length() != 10) {
@@ -23,14 +24,16 @@ public class NotificacionService {
                 return false;
             }
 
-            String numeroFinal = "+57" + soloDigitos;
+            String numeroFinal = "57" + soloDigitos;
 
-            String url = "https://api.callmebot.com/sms.php?phone="
+            String urlStr = "https://api.callmebot.com/whatsapp.php?phone="
                     + numeroFinal
                     + "&text="
-                    + URLEncoder.encode(mensaje, "UTF-8");
+                    + URLEncoder.encode(mensaje, "UTF-8")
+                    + "&apikey="
+                    + API_KEY;
 
-            URL endpoint = new URL(url);
+            URL endpoint = new URL(urlStr);
             HttpURLConnection conn = (HttpURLConnection) endpoint.openConnection();
             conn.setRequestMethod("GET");
 

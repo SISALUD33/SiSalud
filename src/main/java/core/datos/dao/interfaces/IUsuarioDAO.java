@@ -16,4 +16,6 @@ public interface IUsuarioDAO {
     List<UsuarioDTO> listarUsuarios();
 
     boolean cambiarEstadoUsuario(int idUsuario, boolean activo);
+    
+    
 }

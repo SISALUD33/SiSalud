@@ -7,6 +7,7 @@ import core.datos.dto.ProfesionalSaludDTO;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,17 +46,15 @@ public class ProfesionalSaludDAO_MySQL implements IProfesionalSaludDAO {
     }
 
     @Override
-    public boolean crearProfesional(int idUsuario, int idClinica,
-            String especialidad, String registroMedico) {
-
+    public boolean crearProfesionalBasico(int idUsuario) {
         String sql = "{ CALL sisalud_mysql.sp_profesional_salud_crear(?, ?, ?, ?) }";
 
         try (Connection conn = ConexionMySQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 
-            cs.setInt(1, idUsuario);
-            cs.setInt(2, idClinica);
-            cs.setString(3, especialidad);
-            cs.setString(4, registroMedico);
+            cs.setInt(1, idUsuario);                  // usuario recién creado
+            cs.setNull(2, Types.INTEGER);             // id_clinica (pendiente/asignar después)
+            cs.setString(3, "GENERAL");               // especialidad por defecto
+            cs.setString(4, "PENDIENTE");             // registro médico por defecto
 
             return cs.executeUpdate() > 0;
 

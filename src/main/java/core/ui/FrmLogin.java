@@ -1,6 +1,7 @@
 package core.ui;
 
 import core.datos.dto.UsuarioDTO;
+import core.microservicios.NotificacionService;
 import core.negocios.UsuarioNegocios;
 
 import javax.swing.*;
@@ -128,25 +129,32 @@ public class FrmLogin extends JFrame {
         if (usuario != null && usuario.isActivo()) {
             JOptionPane.showMessageDialog(this, "Bienvenido " + usuario.getNombre());
 
-            // Aquí según idRol abres la ventana correspondiente:
-            // 1 = PACIENTE, 2 = CUIDADOR, 3 = DONANTE, 4 = ADMIN, 5 = MEDICO, 6 = CLINICA
+            String telefono = usuario.getTelefono();
+            String mensajeLogin = "Se ha iniciado sesión en SI-SALUD con tu cuenta, "
+                    + usuario.getNombre() + ". Si no fuiste tú, contacta al administrador.";
+            boolean smsOk = NotificacionService.enviarSMS(telefono, mensajeLogin);
+
+            if (!smsOk) {
+                System.out.println("No se pudo enviar SMS de login al número: " + telefono);
+            }
+
+            // Abrir ventana según rol
             switch (usuario.getIdRol()) {
                 case 1:
                     new FrmCampañasPaciente(usuario).setVisible(true);
                     break;
                 case 3:
-                    // new FrmDonacion(usuario).setVisible(true);
+                    new FrmDonacion(usuario).setVisible(true);
                     break;
                 case 4:
                     new FrmAdminUsuarios().setVisible(true);
                     break;
-                // etc...
                 default:
                     JOptionPane.showMessageDialog(this,
                             "Rol aún no asociado a una pantalla. idRol = " + usuario.getIdRol());
             }
 
-            this.dispose(); // Si quieres cerrar el login al entrar
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(this,
                     "Correo, contraseña o estado del usuario inválidos.");
@@ -186,6 +194,15 @@ public class FrmLogin extends JFrame {
 
         if (ok) {
             JOptionPane.showMessageDialog(this, "Usuario registrado correctamente.");
+
+            String mensaje = "Hola " + nombre
+                    + ", tu registro en SI-SALUD se ha realizado correctamente.";
+            boolean smsOk = NotificacionService.enviarSMS(telefono, mensaje);
+
+            if (!smsOk) {
+                System.out.println("No se pudo enviar SMS de registro al número: " + telefono);
+            }
+
         } else {
             JOptionPane.showMessageDialog(this, "No se pudo registrar el usuario.");
         }

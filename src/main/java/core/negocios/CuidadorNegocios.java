@@ -11,7 +11,10 @@ public class CuidadorNegocios {
         this.cuidadorDAO = new CuidadorDAO_MySQL();
     }
 
-    public boolean crearCuidador(int idUsuario) {
+   public boolean crearCuidador(int idUsuario) {
+        if (idUsuario <= 0) {
+            return false;
+        }
         return cuidadorDAO.crearCuidador(idUsuario);
     }
 

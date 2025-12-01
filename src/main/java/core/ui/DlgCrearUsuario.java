@@ -45,11 +45,17 @@ public class DlgCrearUsuario extends JDialog {
 
     private final UsuarioNegocios usuarioNegocios;
     private final PacienteNegocios pacienteNegocios;
+    private final CuidadorNegocios cuidadorNegocios;
+    private final ProfesionalSaludNegocios profesionalSaludNegocios;
+    private final ClinicaNegocios clinicaNegocios;
 
     public DlgCrearUsuario(Frame parent, boolean modal) {
         super(parent, modal);
         usuarioNegocios = new UsuarioNegocios();
         pacienteNegocios = new PacienteNegocios();
+        cuidadorNegocios = new CuidadorNegocios();
+        profesionalSaludNegocios = new ProfesionalSaludNegocios();
+        clinicaNegocios = new ClinicaNegocios();
 
         initComponents();
         cargarClinicasEnCombos();
@@ -78,9 +84,9 @@ public class DlgCrearUsuario extends JDialog {
             "Paciente",
             "Cuidador",
             "Donante",
-            "Médico",
-            "Clínica",
-            "Administrador"
+            "Admin",
+            "Medico",
+            "Clinica"
         });
 
         // ---- Panel Clínica ----
@@ -215,26 +221,25 @@ public class DlgCrearUsuario extends JDialog {
         }
 
         // CREAR ENTIDAD SEGÚN ROL
-        switch (cbRol.getSelectedItem().toString()) {
+        String rolSeleccionado = cbRol.getSelectedItem().toString();
 
-            case "Paciente":
+        switch (rolSeleccionado) {
+            case "Paciente" -> {
                 pacienteNegocios.obtenerOCrearPacientePorUsuario(idUsuario);
-                break;
-
-            case "Cuidador":
-                // TODO: cuidadorNegocios.crear(idUsuario)
-                break;
-
-            case "Médico":
-                // TODO: profesionalNegocios.crear(...)
-                break;
-
-            case "Clínica":
-                // TODO: clinicaNegocios.crear(...)
-                break;
-
-            default:
-                break;
+            }
+            case "Cuidador" -> {
+                cuidadorNegocios.crearCuidador(idUsuario);
+            }
+            case "Médico" -> {
+                profesionalSaludNegocios.crearProfesionalBasico(idUsuario);
+            }
+            case "Clínica" -> {
+                // Usamos los datos del usuario para crear la clínica base
+                clinicaNegocios.crearClinicaBasicaDesdeUsuario(u);
+            }
+            default -> {
+                // DONANTE, ADMIN, etc. no necesitan tabla extra
+            }
         }
 
         creado = true;
