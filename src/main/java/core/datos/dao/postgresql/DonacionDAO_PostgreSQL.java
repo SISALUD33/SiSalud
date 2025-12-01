@@ -13,19 +13,20 @@ public class DonacionDAO_PostgreSQL implements IDonacionDAO {
 
     @Override
     public boolean registrarDonacion(DonacionDTO d) {
-        String sql = "{ CALL public.sp_registrar_donacion(?, ?, ?, ?, ?, ?, ?) }";
+        // Llamamos a la FUNCTION con SELECT
+        String sql = "SELECT public.sp_registrar_donacion(?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = ConexionPostgreSQL.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
+        try (Connection conn = ConexionPostgreSQL.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            cs.setInt(1, d.getIdCampana());
-            cs.setInt(2, d.getIdUsuarioDonante());
-            cs.setDouble(3, d.getMonto());
-            cs.setString(4, d.getEntidadBancaria());
-            cs.setString(5, d.getMedioPago());
-            cs.setString(6, d.getDestinoRecursos());
-            cs.setString(7, d.getReferenciaPago());
+            ps.setInt(1, d.getIdCampana());          // integer
+            ps.setInt(2, d.getIdUsuarioDonante());   // integer
+            ps.setDouble(3, d.getMonto());           // double -> double precision
+            ps.setString(4, d.getMedioPago());       // varchar
+            ps.setString(5, d.getEntidadBancaria()); // varchar
+            ps.setString(6, d.getDestinoRecursos()); // varchar
+            ps.setString(7, d.getReferenciaPago());  // varchar
 
-            cs.execute();
+            ps.executeQuery(); // ejecuta el SELECT
             return true;
 
         } catch (Exception e) {

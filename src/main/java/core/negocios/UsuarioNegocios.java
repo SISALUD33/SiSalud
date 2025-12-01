@@ -55,8 +55,8 @@ public class UsuarioNegocios {
 
         return usuarioDAO.registrarUsuarioRetornarID(u);
     }
-    
-     public List<UsuarioDTO> listarUsuarios() {
+
+    public List<UsuarioDTO> listarUsuarios() {
         return usuarioDAO.listarUsuarios();
     }
 

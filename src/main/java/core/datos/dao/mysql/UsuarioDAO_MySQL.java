@@ -25,7 +25,8 @@ public class UsuarioDAO_MySQL implements IUsuarioDAO {
             cs.setString(4, u.getClave());
             cs.setInt(5, u.getIdRol());
 
-            return cs.executeUpdate() > 0;
+            cs.execute();          // 🔴 aquí el cambio importante
+            return true;           // si llegó aquí, asumimos que todo bien
 
         } catch (Exception e) {
             e.printStackTrace();

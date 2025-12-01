@@ -102,4 +102,13 @@ public class CampañaDTO {
     public void setFechaCreacion(String fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
+    
+     @Override
+    public String toString() {
+        if (titulo != null && !titulo.isBlank()) {
+            return titulo + " (ID " + idCampania + ")";
+        }
+        return "Campaña #" + idCampania;
+    }
 }
+
